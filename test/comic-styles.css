@@ -1,6 +1,7 @@
 .world {
-     postion: relative;
+    postion: relative;
     background: gray;
+    border:1px solid black;
 }
 
 .speech {
