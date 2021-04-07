@@ -32,7 +32,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: green;
+    background: yellow !important;
     width: unset;
     height: 200px;
     z-index: 1;
