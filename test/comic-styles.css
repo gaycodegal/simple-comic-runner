@@ -1,7 +1,5 @@
 .world {
-    width: 640px;
-    height: 480px;
-    postion: relative;
+     postion: relative;
     background: gray;
 }
 
@@ -25,7 +23,7 @@
 
 .speech:focus-within {
     background: transparent;
-    border: 1px solid blue;
+    border: 3px solid blue;
 }
 
 .speech-inner:focus-within {
