@@ -5,8 +5,8 @@ class Speech {
 <div class="speech">
 <div class="speech-inner" tabindex="0">
 <div class="speech-controls">
-<button class="prev">&lt;</button>
-<button class="next">&gt;</button>
+<button class="prev">previous</button>
+<button class="next">next</button>
 </div>
 <div class="speech-text"></div>
 </div></div>`);
