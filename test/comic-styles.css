@@ -29,11 +29,15 @@
 .speech-inner:focus-within {
     position: fixed;
     margin: 0;
-    top: calc(100% - 200px);
     bottom: 0;
     left: 0;
     right: 0;
     background: green;
     width: unset;
-    height: unset;
+    height: 200px;
+    z-index: 1;
 }
+
+.padding {
+    height: 200px;
+};
