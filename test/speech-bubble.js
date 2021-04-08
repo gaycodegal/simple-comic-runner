@@ -3,7 +3,7 @@ class Speech {
     constructor(x, y, w, h, text) {
 	const jel = $(`
 <div class="speech">
-<div class="speech-inner" tabindex="0">
+<div role="article" class="speech-inner" tabindex="0">
 <div class="speech-controls">
 <button class="prev">previous</button>
 <button class="next">next</button>

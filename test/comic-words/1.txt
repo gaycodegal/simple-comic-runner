@@ -1,12 +1,14 @@
 # load the background
 
+title "An example comic"
+
 # the image link doesn't technically need quotes because it has no spaces!
-background " images/samplefile1.png " " This image is a person holding a ball by a bush "
+background "images/samplefile1.png" "This image is a person holding a ball by a bush"
 
 # did you know we have comments!
-speech 0 - window_height 100 window_width 100 " this is an example of a scene with only one piece of text that goes at the bottom "
-speech 10 10 200 50 " hello! " # they work at the ends of lines too!
-speech 300 10 200 40 " hi! "
+speech 0 - window_height 100 window_width 100 "this is an example of a scene with only one piece of text that goes at the bottom"
+speech 10 10 200 50 "hello!" # they work at the ends of lines too!
+speech 300 10 200 40 "hi!"
 
 # big one for demo purposes!
-speech 10 200 200 80 " This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. "
+speech 10 200 200 80 "This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times. This is an exceptionally long paragraph to shwow what would happen if you used something like German in google translate where the text would over flow the box or if you had like a big long monologue for the character to say. The text now repeats five times."

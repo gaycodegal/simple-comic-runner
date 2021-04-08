@@ -11,15 +11,24 @@ window.addEventListener("load", async function() {
     }
     source = `comic-words/${source}.txt`;
     const sourceText = await loadText(source);
-    console.log(sourceText);
+    const context = comicContext();
+    const script = new PolishScript(sourceText, context);
+    script.exec();
+});
+
+function comicContext() {
     const context = basicPolishContext();
+    context.title = {call:polishTitle, count: 1, type: "function"};
     context.speech = {call:polishSpeech, count: 5, type: "function"};
     context.background = {call:polishBackground, count: 2, type: "function"};
     context.window_width = {value: windowWidth, type: "variable"};
     context.window_height = {value: windowHeight, type: "variable"};
-    const script = new PolishScript(sourceText, context);
-    script.exec();
-});
+    return context;
+}
+
+function polishTitle(args) {
+    $("#title").text(args[0]);
+}
 
 async function polishBackground(args, context) {
     return new Promise((resolve, reject)=>{

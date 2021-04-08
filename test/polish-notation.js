@@ -55,11 +55,11 @@ async function execPolishLine(number, polish, context) {
 	    ++instructionPointer;
 	    continue;
 	}
-
-	if (sym === '"') {
-	    const end = reversePolish.indexOf('"', instructionPointer + 1);
+	
+	if (sym.charAt(sym.length - 1) === '"') {
+	    const end = polishStringEnd(reversePolish, instructionPointer);
 	    if (end === -1) {
-		console.error("malformed string at line", number, polish.join(" "));
+		console.error(polishErrorMessage('malformed string', number, reversePolish, instructionPointer));
 		break;
 	    }
 	    const string = polishString(instructionPointer, end, reversePolish);
@@ -96,11 +96,45 @@ async function execPolishLine(number, polish, context) {
     }
 
     if (stack.length !== 0) {
-	console.warn("unexpended stack", stack);
+	console.warn(polishErrorMessage("unexpended stack", number, reversePolish, instructionPointer), stack);
     }
 }
 
+function polishErrorMessage(message, line, reversePolish, instructionPointer) {
+    return `${message} at line ${line} sym(${reversePolish.length - 1 - instructionPointer}), ${reversePolish.reverse().join(" ")}`;
+}
+
+function polishStringEnd(reversePolish, instructionPointer) {
+    if (reversePolish[instructionPointer] === '"') {
+	++instructionPointer;
+    }
+    for (let i = instructionPointer; i < reversePolish.length; ++i) {
+	const sym = reversePolish[i];
+	if (sym.length && sym.charAt(0) == '"') {
+	    return i;
+	}
+    }
+    return -1;
+}
+
 function polishString(instructionPointer, end, reversePolish) {
+    // possible last word
+    let string;
+    if (instructionPointer != end) {
+	const last = reversePolish[instructionPointer].slice(0, -1);
+	let array = [last];
+	if (!last.length) {
+	    array.pop();
+	}
+	array = array.concat(reversePolish.slice(instructionPointer + 1, end));
+	const first = reversePolish[end].slice(1);
+	if (first.length) {
+	    array.push(first);
+	}
+	string = array.reverse().join(" ");
+    } else {
+	string = reversePolish[instructionPointer].slice(1, -1);
+    }
     // need to parse escape codes
-    return reversePolish.slice(instructionPointer + 1, end).reverse().join(" ");
+    return string;
 }
