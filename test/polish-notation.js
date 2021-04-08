@@ -37,12 +37,50 @@ function polishSubtract(args) {
     return args[1] - args[0];
 }
 
-function parsePolish(line) {
-    const indexComment = line.lastIndexOf('# ');
-    if (indexComment != -1) {
-	line = line.slice(0, indexComment);
+function parsePolish(line, number) {
+    let reversePolish = line.split(" ");
+    let instructionPointer = 0;
+    const stack = [];
+    while(instructionPointer < reversePolish.length) {
+	let sym = reversePolish[instructionPointer];
+	if (sym.length === 0) {
+	    ++instructionPointer;
+	    continue;
+	}
+
+	if (sym.charAt(0) === '"') {
+	    const end = polishStringEnd(reversePolish, instructionPointer);
+	    if (end === -1) {
+		console.error(polishErrorMessage('malformed string', number, reversePolish, instructionPointer));
+		break;
+	    }
+	    const string = polishString(instructionPointer, end, reversePolish);
+	    stack.push('"' + string);
+	    instructionPointer = end + 1;
+	    continue;
+	}
+	
+	const hashBreak = sym.indexOf('#');
+	if (hashBreak !== -1) {
+	    sym = sym.slice(0, hashBreak);
+	    reversePolish = [];
+	    if (sym.length == 0) {
+		break;
+	    }
+	}
+
+	if (sym.charAt(0).match(/\d/) != null) {
+	    stack.push(parseFloat(sym));
+	    ++instructionPointer;
+	    continue;
+	}
+
+	stack.push(sym);
+	++instructionPointer;
+	continue;
     }
-    return line.split(" ");
+    
+    return stack;
 }
 
 async function execPolishLine(number, polish, context) {
@@ -51,25 +89,18 @@ async function execPolishLine(number, polish, context) {
     const stack = [];
     while(instructionPointer < reversePolish.length) {
 	const sym = reversePolish[instructionPointer];
+	if (typeof sym === "number") {
+	    stack.push(sym);
+	    ++instructionPointer;
+	    continue;
+	}
 	if (sym.length === 0) {
 	    ++instructionPointer;
 	    continue;
 	}
-	
-	if (sym.charAt(sym.length - 1) === '"') {
-	    const end = polishStringEnd(reversePolish, instructionPointer);
-	    if (end === -1) {
-		console.error(polishErrorMessage('malformed string', number, reversePolish, instructionPointer));
-		break;
-	    }
-	    const string = polishString(instructionPointer, end, reversePolish);
-	    stack.push(string);
-	    instructionPointer = end + 1;
-	    continue;
-	}
 
-	if (sym.charAt(0).match(/\d/) != null) {
-	    stack.push(parseFloat(sym));
+	if (sym.charAt(0) === '"') {
+	    stack.push(sym.slice(1));
 	    ++instructionPointer;
 	    continue;
 	}
@@ -96,45 +127,65 @@ async function execPolishLine(number, polish, context) {
     }
 
     if (stack.length !== 0) {
-	console.warn(polishErrorMessage("unexpended stack", number, reversePolish, instructionPointer), stack);
+	console.warn(rpolishErrorMessage("unexpended stack", number, reversePolish, instructionPointer), stack);
     }
 }
 
-function polishErrorMessage(message, line, reversePolish, instructionPointer) {
+function rpolishErrorMessage(message, line, reversePolish, instructionPointer) {
     return `${message} at line ${line} sym(${reversePolish.length - 1 - instructionPointer}), ${reversePolish.reverse().join(" ")}`;
 }
 
+function polishErrorMessage(message, line, polish, instructionPointer) {
+    return `${message} at line ${line} sym(${instructionPointer}), ${polish.join(" ")}`;
+}
+
+const badEnding = /(?:\\\\)+\\"$/;
 function polishStringEnd(reversePolish, instructionPointer) {
     if (reversePolish[instructionPointer] === '"') {
 	++instructionPointer;
     }
     for (let i = instructionPointer; i < reversePolish.length; ++i) {
 	const sym = reversePolish[i];
-	if (sym.length && sym.charAt(0) == '"') {
+	if (sym.length && sym.charAt(sym.length - 1) == '"') {
+	    if (sym.match(badEnding) != null) {
+		continue;
+	    }
 	    return i;
 	}
     }
     return -1;
 }
 
+const escapeCode = /\\(.)/g;
 function polishString(instructionPointer, end, reversePolish) {
     // possible last word
     let string;
     if (instructionPointer != end) {
-	const last = reversePolish[instructionPointer].slice(0, -1);
-	let array = [last];
-	if (!last.length) {
+	const first = reversePolish[instructionPointer].slice(1);
+	let array = [first];
+	if (!first.length) {
 	    array.pop();
 	}
 	array = array.concat(reversePolish.slice(instructionPointer + 1, end));
-	const first = reversePolish[end].slice(1);
-	if (first.length) {
-	    array.push(first);
+	const last = reversePolish[end].slice(0, -1);
+	if (last.length) {
+	    array.push(last);
 	}
-	string = array.reverse().join(" ");
+	string = array.join(" ");
     } else {
 	string = reversePolish[instructionPointer].slice(1, -1);
     }
     // need to parse escape codes
-    return string;
+    return string.replaceAll(escapeCode, escapeReplace);
+}
+
+const escapements = {
+    'n': '\n',
+};
+function escapeReplace(m, a) {
+    const found = escapements[a];
+    if (found) {
+	return found;
+    }
+    return a;
 }
